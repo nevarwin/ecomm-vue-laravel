@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->id();
             $table->string('title');
             $table->string('slug');
-            $table->integer('quatity');
+            $table->integer('quantity');
             $table->decimal('price', 10, 2);
             $table->boolean('inStock')->default(false);
             $table->boolean('published')->default(false);
