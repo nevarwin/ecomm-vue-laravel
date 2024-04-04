@@ -1,10 +1,172 @@
 <script setup>
+import { ref } from "vue";
 import { usePage } from "@inertiajs/vue3";
 
 const products = usePage().props.products;
+
+// For modals
+const dialogVisible = ref(false);
+const isAddProduct = ref(false);
+const isEditMode = ref(false);
+
+const openAddModal = () => {
+    dialogVisible.value = true;
+    isAddProduct.value = true;
+    isEditMode.value = false;
+};
+const openEditModal = () => {
+    dialogVisible.value = true;
+    isAddProduct.value = false;
+    isEditMode.value = true;
+};
+
+// For form data
+const product = ref({
+    title: "",
+    quantity: "",
+    price: "",
+    inStock: "",
+    published: "",
+    description: "",
+    brand: "",
+    category: "",
+});
 </script>
 
 <template>
+    <!-- element-plus modal start -->
+    <el-dialog
+        v-model="dialogVisible"
+        :title="isEditMode ? 'Edit Product' : 'Add Product'"
+        width="35%"
+        :before-close="handleClose"
+    >
+        <!-- Form Start -->
+        <section class="bg-white dark:bg-gray-900">
+            <div class="max-w-2xl px-2 py-2 mx-auto lg:py-4">
+                <h2
+                    class="mb-4 text-xl font-bold text-gray-900 dark:text-white"
+                >
+                    {{
+                        isEditMode
+                            ? "Edit product details"
+                            : "Add a new product"
+                    }}
+                </h2>
+                <form action="#">
+                    <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                        <div class="sm:col-span-2">
+                            <label
+                                for="name"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >Product Name</label
+                            >
+                            <input
+                                type="text"
+                                name="name"
+                                id="name"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="Type product name"
+                                required=""
+                            />
+                        </div>
+                        <div class="w-full">
+                            <label
+                                for="brand"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >Brand</label
+                            >
+                            <input
+                                type="text"
+                                name="brand"
+                                id="brand"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="Product brand"
+                                required=""
+                            />
+                        </div>
+                        <div class="w-full">
+                            <label
+                                for="price"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >Price</label
+                            >
+                            <input
+                                type="number"
+                                name="price"
+                                id="price"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="$2999"
+                                required=""
+                            />
+                        </div>
+                        <div>
+                            <label
+                                for="category"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >Category</label
+                            >
+                            <select
+                                id="category"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            >
+                                <option selected="">Select category</option>
+                                <option value="TV">TV/Monitors</option>
+                                <option value="PC">PC</option>
+                                <option value="GA">Gaming/Console</option>
+                                <option value="PH">Phones</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                for="item-weight"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >Item Weight (kg)</label
+                            >
+                            <input
+                                type="number"
+                                name="item-weight"
+                                id="item-weight"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="12"
+                                required=""
+                            />
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label
+                                for="description"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >Description</label
+                            >
+                            <textarea
+                                id="description"
+                                rows="8"
+                                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="Your description here"
+                            ></textarea>
+                        </div>
+                    </div>
+                    <button
+                        type="submit"
+                        class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
+                    >
+                        Add product
+                    </button>
+                </form>
+            </div>
+        </section>
+        <!-- Form End -->
+        <template #footer>
+            <div class="dialog-footer">
+                <el-button @click="dialogVisible = false">Cancel</el-button>
+                <el-button @click="dialogVisible = false" type="primary">
+                    Confirm
+                </el-button>
+            </div>
+        </template>
+    </el-dialog>
+    <!-- element-plus modal end -->
+
     <section class="p-3 bg-gray-50 dark:bg-gray-900 sm:p-5">
         <div class="max-w-screen-xl px-4 mx-auto lg:px-12">
             <!-- Start coding here -->
@@ -52,6 +214,7 @@ const products = usePage().props.products;
                     >
                         <button
                             type="button"
+                            @click="openAddModal"
                             class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-amber-700 hover:bg-amber-800 focus:ring-4 focus:ring-amber-300 dark:bg-amber-600 dark:hover:bg-amber-700 focus:outline-none dark:focus:ring-amber-800"
                         >
                             <svg
@@ -61,11 +224,20 @@ const products = usePage().props.products;
                                 xmlns="http://www.w3.org/2000/svg"
                                 aria-hidden="true"
                             >
-                                <path
-                                    clip-rule="evenodd"
-                                    fill-rule="evenodd"
-                                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                                />
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    class="w-6 h-6"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 4.5v15m7.5-7.5h-15"
+                                    />
+                                </svg>
                             </svg>
                             Add product
                         </button>
@@ -327,9 +499,13 @@ const products = usePage().props.products;
                                             <li>
                                                 <a
                                                     href="#"
+                                                    @click="
+                                                        openEditModal(product)
+                                                    "
                                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                    >Edit</a
                                                 >
+                                                    Edit
+                                                </a>
                                             </li>
                                         </ul>
                                         <div class="py-1">
